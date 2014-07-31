@@ -1,0 +1,14 @@
+{
+  "kind": "Deployment",
+  "apiVersion": "v1beta1",
+  "deploymentImage": "cewong/simple-deploy",
+  "context": {
+    "TARGET_IMAGE": "cewong/data:red",
+    "TARGET_REPLICAS": "3",
+    "PORT_MAPPING": "8082:80",
+    "NAME": "data-service"
+  },
+  "labels": {
+    "name": "data-service"
+  }
+}
