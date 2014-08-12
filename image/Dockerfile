@@ -1,5 +1,5 @@
-FROM fedora
+FROM scratch
 
-ADD bin /usr/local/bin
+ADD simple-deploy /simple-deploy
 
-CMD ["simple-deploy"]
+CMD ["/simple-deploy"]

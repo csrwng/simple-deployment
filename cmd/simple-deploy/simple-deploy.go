@@ -110,13 +110,17 @@ func deployTarget(client *kube_client.Client) {
 
 	// For this simple deploy, remove previous replication controllers
 	for _, rc := range replicationControllers.Items {
-		rc.DesiredState.Replicas = 0
 		glog.Info("Stopping replication controller: ")
 		obj, _ := yaml.Marshal(rc)
 		glog.Info(string(obj))
-		_, err := client.UpdateReplicationController(rc)
+		rcObj, err1 := client.GetReplicationController(rc.ID)
+		if err1 != nil {
+			glog.Fatalf("Unable to get replication controller %s - error: %#v\n", rc.ID, err1)
+		}
+		rcObj.DesiredState.Replicas = 0
+		_, err := client.UpdateReplicationController(rcObj)
 		if err != nil {
-			glog.Fatalf("Unable to stop replication controller %s\n", rc.ID)
+			glog.Fatalf("Unable to stop replication controller %s - error: %#v\n", rc.ID, err)
 		}
 	}
 
@@ -124,7 +128,7 @@ func deployTarget(client *kube_client.Client) {
 		glog.Infof("Deleting replication controller %s", rc.ID)
 		err := client.DeleteReplicationController(rc.ID)
 		if err != nil {
-			glog.Fatalf("Unable to remove replication controller %s\n", rc.ID)
+			glog.Fatalf("Unable to remove replication controller %s - error: %#v\n", rc.ID, err)
 		}
 	}
 
